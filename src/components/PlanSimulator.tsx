@@ -29,15 +29,18 @@ const formSchema = z.object({
   modelType: z.enum(["compartilhado", "individual"]),
   
   // Shared plan specific fields
-  numClientesCompartilhado: z.string().optional().transform(val => val ? parseInt(val, 10) : 0),
-  creditosPorClienteCompartilhado: z.string().optional().transform(val => val ? parseInt(val, 10) : 0),
-  margemPorClienteCompartilhado: z.string().optional().transform(val => val ? parseInt(val, 10) : 0),
+  numClientesCompartilhado: z.string().transform(val => val ? parseInt(val, 10) : 0),
+  creditosPorClienteCompartilhado: z.string().transform(val => val ? parseInt(val, 10) : 0),
+  margemPorClienteCompartilhado: z.string().transform(val => val ? parseInt(val, 10) : 0),
   
   // Individual plan specific fields
   planType: z.enum(["aceleracao", "growth", "scaleUp"]).optional(),
-  numClientesIndividual: z.string().optional().transform(val => val ? parseInt(val, 10) : 0),
-  margemPorClienteIndividual: z.string().optional().transform(val => val ? parseInt(val, 10) : 0),
+  numClientesIndividual: z.string().transform(val => val ? parseInt(val, 10) : 0),
+  margemPorClienteIndividual: z.string().transform(val => val ? parseInt(val, 10) : 0),
 });
+
+// Create a type for the form values
+type FormValues = z.infer<typeof formSchema>;
 
 interface PlanSimulatorProps {
   setResults: (results: any) => void;
@@ -47,7 +50,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
   const [modelType, setModelType] = useState<"compartilhado" | "individual">("compartilhado");
 
   // Set up form with default values
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       modelType: "compartilhado",
@@ -64,7 +67,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
   const watchModelType = form.watch("modelType");
   
   // Handle form submission
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: FormValues) {
     try {
       // Get plan price based on selection
       const getPlanPrice = (planType: string | undefined) => {
@@ -79,9 +82,9 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
       // Calculate results for shared model
       if (values.modelType === "compartilhado") {
         const baseMonthlyPrice = 1987; // Scale Up (990) + White Label (997)
-        const clientCount = values.numClientesCompartilhado || 0;
-        const creditsPerClient = values.creditosPorClienteCompartilhado || 0;
-        const marginPercent = values.margemPorClienteCompartilhado || 0;
+        const clientCount = values.numClientesCompartilhado;
+        const creditsPerClient = values.creditosPorClienteCompartilhado;
+        const marginPercent = values.margemPorClienteCompartilhado;
         
         const pricePerClient = (baseMonthlyPrice / clientCount) * (1 + marginPercent / 100);
         const totalRevenue = pricePerClient * clientCount;
@@ -125,8 +128,8 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
       // Calculate results for individual model
       else {
         const planPrice = getPlanPrice(values.planType);
-        const clientCount = values.numClientesIndividual || 0;
-        const marginPercent = values.margemPorClienteIndividual || 0;
+        const clientCount = values.numClientesIndividual;
+        const marginPercent = values.margemPorClienteIndividual;
         
         const pricePerClient = planPrice * (1 + marginPercent / 100);
         const totalRevenue = pricePerClient * clientCount;
