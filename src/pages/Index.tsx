@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import PlanComparison from "@/components/PlanComparison";
 import PlanSimulator from "@/components/PlanSimulator";
@@ -78,34 +77,6 @@ const Index = () => {
             )}
           </div>
         )}
-
-        {/* Call to Action */}
-        <div className="mt-16 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6">
-            Descubra qual modelo é ideal para sua operação com IA e comece a escalar agora!
-          </h2>
-          <div className="flex flex-col md:flex-row justify-center gap-4 mt-8">
-            <Button 
-              className="bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 text-white"
-              size="lg"
-            >
-              Quero vender com White Label
-            </Button>
-            <Button 
-              className="bg-gradient-to-r from-orange-500 to-orange-700 hover:from-orange-600 hover:to-orange-800 text-white"
-              size="lg"
-            >
-              Prefiro oferecer planos individuais
-            </Button>
-            <Button 
-              variant="outline" 
-              className="border-slate-500 text-white hover:bg-slate-700"
-              size="lg"
-            >
-              Falar com um Especialista em Escalabilidade
-            </Button>
-          </div>
-        </div>
       </main>
     </div>
   );
