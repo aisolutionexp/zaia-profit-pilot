@@ -78,8 +78,11 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
   const watchModelType = form.watch("modelType");
   
   // Handle form submission
-  function onSubmit(values: FormValues) {
+  function onSubmit(data: FormInputs) {
     try {
+      // Use Zod to transform the string values to numbers
+      const values = formSchema.parse(data);
+      
       // Get plan price based on selection
       const getPlanPrice = (planType: string | undefined) => {
         switch(planType) {
