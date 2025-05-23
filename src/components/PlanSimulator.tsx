@@ -39,7 +39,18 @@ const formSchema = z.object({
   margemPorClienteIndividual: z.string().transform(val => val ? parseInt(val, 10) : 0),
 });
 
-// Create a type for the form values
+// Define the raw form input type (before transformation)
+type FormInputs = {
+  modelType: "compartilhado" | "individual";
+  numClientesCompartilhado: string;
+  creditosPorClienteCompartilhado: string;
+  margemPorClienteCompartilhado: string;
+  planType?: "aceleracao" | "growth" | "scaleUp";
+  numClientesIndividual: string;
+  margemPorClienteIndividual: string;
+};
+
+// Define the transformed values type (after zod transform)
 type FormValues = z.infer<typeof formSchema>;
 
 interface PlanSimulatorProps {
@@ -50,7 +61,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
   const [modelType, setModelType] = useState<"compartilhado" | "individual">("compartilhado");
 
   // Set up form with default values
-  const form = useForm<FormValues>({
+  const form = useForm<FormInputs>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       modelType: "compartilhado",
