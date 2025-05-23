@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -29,14 +28,22 @@ const formSchema = z.object({
   modelType: z.enum(["compartilhado", "individual"]),
   
   // Shared plan specific fields
-  numClientesCompartilhado: z.string().transform(val => val ? parseInt(val, 10) : 0),
-  creditosPorClienteCompartilhado: z.string().transform(val => val ? parseInt(val, 10) : 0),
-  margemPorClienteCompartilhado: z.string().transform(val => val ? parseInt(val, 10) : 0),
+  numClientesCompartilhado: z.preprocess(val => Number(val), z.number()),
+  creditosPorClienteCompartilhado: z.preprocess(val => Number(val), z.number()),
+  margemPorClienteCompartilhado: z.preprocess(val => Number(val), z.number()),
   
   // Individual plan specific fields
   planType: z.enum(["aceleracao", "growth", "scaleUp"]).optional(),
-  numClientesIndividual: z.string().transform(val => val ? parseInt(val, 10) : 0),
-  margemPorClienteIndividual: z.string().transform(val => val ? parseInt(val, 10) : 0),
+  numClientesIndividual: z.preprocess(val => Number(val), z.number()),
+  margemPorClienteIndividual: z.preprocess(val => Number(val), z.number()),
+}).refine((data) => {
+  if (data.modelType === "individual") {
+    return !!data.planType;
+  }
+  return true;
+}, {
+  message: "Plano é obrigatório para o modelo individual",
+  path: ["planType"]
 });
 
 // Define the raw form input type (before transformation)
@@ -65,12 +72,12 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       modelType: "compartilhado",
-      numClientesCompartilhado: "10",
-      creditosPorClienteCompartilhado: "2500",
-      margemPorClienteCompartilhado: "60",
+      numClientesCompartilhado: "",
+      creditosPorClienteCompartilhado: "",
+      margemPorClienteCompartilhado: "",
       planType: "aceleracao",
-      numClientesIndividual: "10",
-      margemPorClienteIndividual: "40",
+      numClientesIndividual: "",
+      margemPorClienteIndividual: "",
     },
   });
 
@@ -119,8 +126,14 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
         };
 
         // Check if individual plan results exist to add comparison
-        const individualPlanPrice = getPlanPrice(values.planType);
-        if (values.numClientesIndividual && values.margemPorClienteIndividual) {
+        if (
+          values.planType &&
+          values.numClientesIndividual &&
+          values.margemPorClienteIndividual &&
+          !isNaN(values.numClientesIndividual) &&
+          !isNaN(values.margemPorClienteIndividual)
+        ) {
+          const individualPlanPrice = getPlanPrice(values.planType);
           const individualClientCount = values.numClientesIndividual;
           const individualMarginPercent = values.margemPorClienteIndividual;
           
@@ -135,12 +148,18 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
             profit: Math.round(individualProfit * 100) / 100,
             profitDifference: Math.round((results.profit - individualProfit) * 100) / 100
           };
+        } else {
+          console.warn('Comparação não realizada: valores do plano individual ausentes ou inválidos', values);
         }
 
         setResults(results);
       } 
       // Calculate results for individual model
       else {
+        if (!values.planType) {
+          throw new Error("Plano é obrigatório para o modelo individual");
+        }
+
         const planPrice = getPlanPrice(values.planType);
         const clientCount = values.numClientesIndividual;
         const marginPercent = values.margemPorClienteIndividual;
@@ -166,7 +185,12 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
         };
 
         // Check if shared plan results exist to add comparison
-        if (values.numClientesCompartilhado && values.margemPorClienteCompartilhado) {
+        if (
+          values.numClientesCompartilhado &&
+          values.margemPorClienteCompartilhado &&
+          !isNaN(values.numClientesCompartilhado) &&
+          !isNaN(values.margemPorClienteCompartilhado)
+        ) {
           const baseMonthlyPrice = 1987;
           const sharedClientCount = values.numClientesCompartilhado;
           const sharedMarginPercent = values.margemPorClienteCompartilhado;
@@ -181,6 +205,8 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
             profit: Math.round(sharedProfit * 100) / 100,
             profitDifference: Math.round((sharedProfit - results.profit) * 100) / 100
           };
+        } else {
+          console.warn('Comparação não realizada: valores do plano compartilhado ausentes ou inválidos', values);
         }
 
         setResults(results);
@@ -191,11 +217,11 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
         description: "Confira os resultados abaixo.",
         variant: "default",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error calculating simulation:", error);
       toast({
         title: "Erro ao calcular simulação",
-        description: "Verifique os valores inseridos e tente novamente.",
+        description: error?.message || "Verifique os valores inseridos e tente novamente.",
         variant: "destructive",
       });
     }
@@ -259,21 +285,21 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Shared Plan Fields */}
-            <div className={`space-y-4 p-6 bg-blue-900/30 rounded-lg border border-blue-800/30 ${watchModelType !== "compartilhado" ? "opacity-50" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-300">Configuração Plano Compartilhado</h3>
+            <div className={`space-y-4 p-6 bg-blue-900/40 rounded-lg border border-blue-800/40 ${watchModelType !== "compartilhado" ? "opacity-50" : ""}`}>
+              <h3 className="text-xl font-semibold text-blue-200">Configuração Plano Compartilhado</h3>
               
               <div className="flex flex-wrap gap-2">
-                <div className="bg-blue-950/80 px-3 py-2 rounded-md">
-                  <span className="block text-sm text-slate-300">Plano Scale Up</span>
-                  <span className="font-semibold text-blue-200">R$ 990</span>
+                <div className="bg-blue-950/90 px-3 py-2 rounded-md">
+                  <span className="block text-sm text-slate-200">Plano Scale Up</span>
+                  <span className="font-semibold text-blue-100">R$ 990</span>
                 </div>
-                <div className="bg-blue-950/80 px-3 py-2 rounded-md">
-                  <span className="block text-sm text-slate-300">White Label</span>
-                  <span className="font-semibold text-blue-200">R$ 997</span>
+                <div className="bg-blue-950/90 px-3 py-2 rounded-md">
+                  <span className="block text-sm text-slate-200">White Label</span>
+                  <span className="font-semibold text-blue-100">R$ 997</span>
                 </div>
-                <div className="bg-blue-950/80 px-3 py-2 rounded-md">
-                  <span className="block text-sm text-slate-300">Total Fixo</span>
-                  <span className="font-semibold text-blue-200">R$ 1.987</span>
+                <div className="bg-blue-950/90 px-3 py-2 rounded-md">
+                  <span className="block text-sm text-slate-200">Total Fixo</span>
+                  <span className="font-semibold text-blue-100">R$ 1.987</span>
                 </div>
               </div>
               
@@ -286,8 +312,9 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Ex: 10"
+                        placeholder="Ex: 8"
                         min="1"
+                        className="placeholder:text-slate-400"
                         {...field}
                         disabled={watchModelType !== "compartilhado"}
                       />
@@ -312,6 +339,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         placeholder="Ex: 2500"
                         min="1000"
                         step="500"
+                        className="placeholder:text-slate-400"
                         {...field}
                         disabled={watchModelType !== "compartilhado"}
                       />
@@ -333,9 +361,10 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Ex: 60"
+                        placeholder="Ex: 40"
                         min="0"
                         max="500"
+                        className="placeholder:text-slate-400"
                         {...field}
                         disabled={watchModelType !== "compartilhado"}
                       />
@@ -350,22 +379,22 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
             </div>
 
             {/* Individual Plan Fields */}
-            <div className={`space-y-4 p-6 bg-orange-900/30 rounded-lg border border-orange-800/30 ${watchModelType !== "individual" ? "opacity-50" : ""}`}>
-              <h3 className="text-xl font-semibold text-orange-300">Configuração Plano Individual</h3>
+            <div className={`space-y-4 p-6 bg-orange-900/40 rounded-lg border border-orange-800/40 ${watchModelType !== "individual" ? "opacity-50" : ""}`}>
+              <h3 className="text-xl font-semibold text-orange-200">Configuração Plano Individual</h3>
               
               <FormField
                 control={form.control}
                 name="planType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-slate-100">Plano Ofertado ao Cliente:</FormLabel>
+                    <FormLabel className="text-white">Plano Ofertado ao Cliente:</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       disabled={watchModelType !== "individual"}
                     >
                       <FormControl>
-                        <SelectTrigger className="bg-orange-950/80 border-orange-800/50 text-slate-100">
+                        <SelectTrigger className="bg-orange-950/90 border-orange-800/50 text-white">
                           <SelectValue placeholder="Selecionar plano" />
                         </SelectTrigger>
                       </FormControl>
@@ -375,7 +404,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         <SelectItem value="scaleUp">Scale Up - R$ 990</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription className="text-slate-300">
+                    <FormDescription className="text-slate-200">
                       Plano que você irá revender para seus clientes
                     </FormDescription>
                     <FormMessage />
@@ -392,8 +421,9 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Ex: 10"
+                        placeholder="Ex: 8"
                         min="1"
+                        className="placeholder:text-slate-400"
                         {...field}
                         disabled={watchModelType !== "individual"}
                       />
@@ -418,6 +448,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         placeholder="Ex: 40"
                         min="0"
                         max="500"
+                        className="placeholder:text-slate-400"
                         {...field}
                         disabled={watchModelType !== "individual"}
                       />

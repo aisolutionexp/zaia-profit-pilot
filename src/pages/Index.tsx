@@ -27,22 +27,22 @@ const Index = () => {
       <main className="container mx-auto px-4 pb-16">
         {/* Navigation */}
         <div className="flex justify-center mb-8">
-          <div className="inline-flex rounded-md shadow-sm" role="group">
+          <div className="inline-flex rounded-md shadow-sm gap-2" role="group">
             <Button
               variant={activeSection === "comparison" ? "default" : "outline"}
               onClick={() => setActiveSection("comparison")}
-              className={`rounded-l-md ${
+              className={`${
                 activeSection === "comparison"
                   ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-slate-800 text-slate-300 hover:bg-slate-700"
               }`}
             >
-              Comparar Planos
+              Entenda os Planos
             </Button>
             <Button
               variant={activeSection === "simulator" ? "default" : "outline"}
               onClick={() => setActiveSection("simulator")}
-              className={`rounded-r-md ${
+              className={`${
                 activeSection === "simulator"
                   ? "bg-orange-600 hover:bg-orange-700"
                   : "bg-slate-800 text-slate-300 hover:bg-slate-700"

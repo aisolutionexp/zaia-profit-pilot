@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
@@ -38,17 +37,34 @@ const PlanComparison = () => {
       descricao: "Personalização completa da plataforma, domínio próprio, ideal para revendedores"
     }
   ];
-  
-  // Comparison data for business models
+
+  // Data for model comparison
   const comparisonData = [
-    { aspecto: "Funcionalidades", compartilhado: "Máximas (do plano contratado)", individual: "Limitadas ao plano assinado" },
-    { aspecto: "Controle de créditos", compartilhado: "Manual com automação", individual: "Automático pela Zaia" },
-    { aspecto: "Upsell", compartilhado: "Créditos extras, novos agentes", individual: "Upgrade de plano" },
-    { aspecto: "Escalabilidade", compartilhado: "Horizontal (clientes/contas)", individual: "Vertical (melhoria de plano)" },
-    { aspecto: "Custo mensal (base)", compartilhado: "R$ 1.987 (990 + 997)", individual: "R$ 249 a R$ 990 por cliente" },
-    { aspecto: "Margem por pacote", compartilhado: "Definida por você", individual: "Fixa, depende do plano repassado" },
-    { aspecto: "Automação para alertas", compartilhado: "Requer n8n/Make", individual: "Não necessário" },
-    { aspecto: "Cliente ultrapassa limite", compartilhado: "Notificado, cobrança extra", individual: "Agente para automaticamente" }
+    {
+      aspecto: "Investimento Inicial",
+      compartilhado: "R$ 1.987 (Scale Up + White Label)",
+      individual: "A partir de R$ 249 por cliente"
+    },
+    {
+      aspecto: "Escalabilidade",
+      compartilhado: "Ilimitada, sem custo adicional por cliente",
+      individual: "Linear, custo cresce com cada cliente"
+    },
+    {
+      aspecto: "Gestão de Créditos",
+      compartilhado: "Necessário controle e distribuição",
+      individual: "Sem necessidade de gestão"
+    },
+    {
+      aspecto: "Marca",
+      compartilhado: "Sua marca na plataforma",
+      individual: "Marca Zaia"
+    },
+    {
+      aspecto: "Complexidade Operacional",
+      compartilhado: "Requer mais atenção e controles",
+      individual: "Simples, direto"
+    }
   ];
 
   return (
@@ -60,14 +76,14 @@ const PlanComparison = () => {
       {/* Official Plans */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         {zaiaPlans.map((plan) => (
-          <Card key={plan.nome} className="bg-slate-800 border-slate-700 hover:border-blue-500 transition-all duration-300 h-full">
+          <Card key={plan.nome} className="bg-slate-800/90 border-slate-700 hover:border-blue-500 transition-all duration-300 h-full">
             <CardHeader className="pb-3">
               <CardTitle className="text-xl font-bold text-white">{plan.nome}</CardTitle>
-              <CardDescription className="text-slate-300 text-lg font-bold">
+              <CardDescription className="text-slate-200 text-lg font-bold">
                 R$ {plan.valor_mensal}/mês
               </CardDescription>
             </CardHeader>
-            <CardContent className="text-slate-300">
+            <CardContent className="text-slate-200">
               {plan.descricao ? (
                 <p>{plan.descricao}</p>
               ) : (
@@ -75,10 +91,10 @@ const PlanComparison = () => {
                   <li>✓ {typeof plan.agentes === 'string' ? plan.agentes : `${plan.agentes}`} agentes</li>
                   <li>✓ {plan.creditos_por_agente.toLocaleString()} créditos/agente</li>
                   <li>✓ {(plan.caracteres_treinamento / 1000000).toFixed(1)}M caracteres para treinamento</li>
-                  <li className={plan.integracoes_avancadas ? "text-green-400" : "text-slate-500"}>
+                  <li className={plan.integracoes_avancadas ? "text-emerald-400" : "text-slate-500"}>
                     {plan.integracoes_avancadas ? "✓" : "✘"} Integrações avançadas
                   </li>
-                  <li className={plan.suporte_1a1 ? "text-green-400" : "text-slate-500"}>
+                  <li className={plan.suporte_1a1 ? "text-emerald-400" : "text-slate-500"}>
                     {plan.suporte_1a1 ? "✓" : "✘"} Suporte 1:1
                   </li>
                 </ul>
@@ -93,15 +109,15 @@ const PlanComparison = () => {
       </h2>
       
       {/* Comparison Table */}
-      <Card className="bg-slate-800 border-slate-700 overflow-hidden">
+      <Card className="bg-slate-800/90 border-slate-700 overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="bg-slate-900">
-                  <TableHead className="w-1/3 text-white">Aspecto</TableHead>
-                  <TableHead className="w-1/3 text-blue-400">Compartilhado (WL + Scale Up)</TableHead>
-                  <TableHead className="w-1/3 text-orange-400">Individual (Aceleração, Growth, Scale Up)</TableHead>
+                  <TableHead className="w-1/3 text-white font-semibold">Aspecto</TableHead>
+                  <TableHead className="w-1/3 text-blue-300 font-semibold">Compartilhado (WL + Scale Up)</TableHead>
+                  <TableHead className="w-1/3 text-orange-300 font-semibold">Individual (Aceleração, Growth, Scale Up)</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -110,9 +126,9 @@ const PlanComparison = () => {
                     key={index}
                     className="border-slate-700 hover:bg-slate-700/50 transition-colors"
                   >
-                    <TableCell className="font-medium">{item.aspecto}</TableCell>
-                    <TableCell>{item.compartilhado}</TableCell>
-                    <TableCell>{item.individual}</TableCell>
+                    <TableCell className="font-medium text-white">{item.aspecto}</TableCell>
+                    <TableCell className="text-slate-200">{item.compartilhado}</TableCell>
+                    <TableCell className="text-slate-200">{item.individual}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -123,42 +139,42 @@ const PlanComparison = () => {
 
       {/* Modelo Visual Comparativo */}
       <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <Card className="bg-gradient-to-br from-blue-900/50 to-blue-800/30 border border-blue-700/50 p-4 hover:scale-[1.01] transition-transform duration-300">
+        <Card className="bg-gradient-to-br from-blue-950/90 to-blue-900/80 border border-blue-700/50 p-4 hover:scale-[1.01] transition-transform duration-300">
           <CardHeader>
-            <CardTitle className="text-center text-blue-400">Modelo Compartilhado (White Label)</CardTitle>
+            <CardTitle className="text-center text-blue-200 text-2xl">Modelo Compartilhado (White Label)</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-            <div className="h-40 w-40 bg-blue-500/20 rounded-full flex items-center justify-center mb-4">
+            <div className="h-40 w-40 bg-blue-800/40 rounded-full flex items-center justify-center mb-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-400">1 Plano</div>
+                <div className="text-2xl font-bold text-blue-200">1 Plano</div>
                 <div className="text-xl text-blue-300">↓</div>
-                <div className="text-2xl font-bold text-blue-400">N Clientes</div>
+                <div className="text-2xl font-bold text-blue-200">N Clientes</div>
               </div>
             </div>
-            <p className="text-slate-300 text-center">
+            <p className="text-slate-100 text-center text-lg">
               Uma única conta com plano Scale Up + White Label que atende múltiplos clientes.
               <br />
-              <span className="font-bold text-blue-400">Escale horizontalmente!</span>
+              <span className="font-bold text-blue-200 mt-2 block">Escale horizontalmente!</span>
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-orange-900/50 to-orange-800/30 border border-orange-700/50 p-4 hover:scale-[1.01] transition-transform duration-300">
+        <Card className="bg-gradient-to-br from-orange-950/90 to-orange-900/80 border border-orange-700/50 p-4 hover:scale-[1.01] transition-transform duration-300">
           <CardHeader>
-            <CardTitle className="text-center text-orange-400">Modelo Individual por Cliente</CardTitle>
+            <CardTitle className="text-center text-orange-200 text-2xl">Modelo Individual por Cliente</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center">
-            <div className="h-40 w-40 bg-orange-500/20 rounded-full flex items-center justify-center mb-4">
+            <div className="h-40 w-40 bg-orange-800/40 rounded-full flex items-center justify-center mb-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-400">1 Cliente</div>
+                <div className="text-2xl font-bold text-orange-200">1 Cliente</div>
                 <div className="text-xl text-orange-300">↔</div>
-                <div className="text-2xl font-bold text-orange-400">1 Plano</div>
+                <div className="text-2xl font-bold text-orange-200">1 Plano</div>
               </div>
             </div>
-            <p className="text-slate-300 text-center">
+            <p className="text-slate-100 text-center text-lg">
               Cada cliente possui sua própria conta com um plano específico.
               <br />
-              <span className="font-bold text-orange-400">Simplicidade operacional!</span>
+              <span className="font-bold text-orange-200 mt-2 block">Simplicidade operacional!</span>
             </p>
           </CardContent>
         </Card>
