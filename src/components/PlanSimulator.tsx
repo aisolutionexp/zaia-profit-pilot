@@ -232,7 +232,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                     defaultValue={field.value}
                     className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-6"
                   >
-                    <FormItem className="flex items-center space-x-3 space-y-0 bg-blue-950/30 p-4 rounded-md border border-blue-800/50 w-full md:w-1/2">
+                    <FormItem className="flex items-center space-x-3 space-y-0 bg-blue-950/50 p-4 rounded-md border border-blue-800/50 w-full md:w-1/2">
                       <FormControl>
                         <RadioGroupItem value="compartilhado" />
                       </FormControl>
@@ -241,7 +241,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         <span className="text-sm text-slate-300">White Label + Scale Up</span>
                       </FormLabel>
                     </FormItem>
-                    <FormItem className="flex items-center space-x-3 space-y-0 bg-orange-950/30 p-4 rounded-md border border-orange-800/50 w-full md:w-1/2">
+                    <FormItem className="flex items-center space-x-3 space-y-0 bg-orange-950/50 p-4 rounded-md border border-orange-800/50 w-full md:w-1/2">
                       <FormControl>
                         <RadioGroupItem value="individual" />
                       </FormControl>
@@ -259,21 +259,21 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Shared Plan Fields */}
-            <div className={`space-y-4 p-6 bg-blue-900/20 rounded-lg border border-blue-800/30 ${watchModelType !== "compartilhado" ? "opacity-50" : ""}`}>
-              <h3 className="text-xl font-semibold text-blue-400">Configuração Plano Compartilhado</h3>
+            <div className={`space-y-4 p-6 bg-blue-900/30 rounded-lg border border-blue-800/30 ${watchModelType !== "compartilhado" ? "opacity-50" : ""}`}>
+              <h3 className="text-xl font-semibold text-blue-300">Configuração Plano Compartilhado</h3>
               
               <div className="flex flex-wrap gap-2">
-                <div className="bg-blue-950/50 px-3 py-2 rounded-md">
+                <div className="bg-blue-950/80 px-3 py-2 rounded-md">
                   <span className="block text-sm text-slate-300">Plano Scale Up</span>
-                  <span className="font-semibold text-white">R$ 990</span>
+                  <span className="font-semibold text-blue-200">R$ 990</span>
                 </div>
-                <div className="bg-blue-950/50 px-3 py-2 rounded-md">
+                <div className="bg-blue-950/80 px-3 py-2 rounded-md">
                   <span className="block text-sm text-slate-300">White Label</span>
-                  <span className="font-semibold text-white">R$ 997</span>
+                  <span className="font-semibold text-blue-200">R$ 997</span>
                 </div>
-                <div className="bg-blue-950/50 px-3 py-2 rounded-md">
+                <div className="bg-blue-950/80 px-3 py-2 rounded-md">
                   <span className="block text-sm text-slate-300">Total Fixo</span>
-                  <span className="font-semibold text-white">R$ 1.987</span>
+                  <span className="font-semibold text-blue-200">R$ 1.987</span>
                 </div>
               </div>
               
@@ -282,7 +282,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                 name="numClientesCompartilhado"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantidade de Clientes:</FormLabel>
+                    <FormLabel className="text-slate-100">Quantidade de Clientes:</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -292,7 +292,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         disabled={watchModelType !== "compartilhado"}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-slate-300">
                       Número de contas que utilizarão o plano compartilhado
                     </FormDescription>
                     <FormMessage />
@@ -305,7 +305,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                 name="creditosPorClienteCompartilhado"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Créditos por Cliente:</FormLabel>
+                    <FormLabel className="text-slate-100">Créditos por Cliente:</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -316,7 +316,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         disabled={watchModelType !== "compartilhado"}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-slate-300">
                       Média de créditos que cada cliente irá consumir
                     </FormDescription>
                     <FormMessage />
@@ -329,7 +329,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                 name="margemPorClienteCompartilhado"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sua Margem por Cliente (%):</FormLabel>
+                    <FormLabel className="text-slate-100">Sua Margem por Cliente (%):</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -340,7 +340,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         disabled={watchModelType !== "compartilhado"}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-slate-300">
                       Percentual de lucro que você aplicará
                     </FormDescription>
                     <FormMessage />
@@ -350,22 +350,22 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
             </div>
 
             {/* Individual Plan Fields */}
-            <div className={`space-y-4 p-6 bg-orange-900/20 rounded-lg border border-orange-800/30 ${watchModelType !== "individual" ? "opacity-50" : ""}`}>
-              <h3 className="text-xl font-semibold text-orange-400">Configuração Plano Individual</h3>
+            <div className={`space-y-4 p-6 bg-orange-900/30 rounded-lg border border-orange-800/30 ${watchModelType !== "individual" ? "opacity-50" : ""}`}>
+              <h3 className="text-xl font-semibold text-orange-300">Configuração Plano Individual</h3>
               
               <FormField
                 control={form.control}
                 name="planType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Plano Ofertado ao Cliente:</FormLabel>
+                    <FormLabel className="text-slate-100">Plano Ofertado ao Cliente:</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       disabled={watchModelType !== "individual"}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-orange-950/80 border-orange-800/50 text-slate-100">
                           <SelectValue placeholder="Selecionar plano" />
                         </SelectTrigger>
                       </FormControl>
@@ -375,7 +375,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         <SelectItem value="scaleUp">Scale Up - R$ 990</SelectItem>
                       </SelectContent>
                     </Select>
-                    <FormDescription>
+                    <FormDescription className="text-slate-300">
                       Plano que você irá revender para seus clientes
                     </FormDescription>
                     <FormMessage />
@@ -388,7 +388,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                 name="numClientesIndividual"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Quantidade de Clientes:</FormLabel>
+                    <FormLabel className="text-slate-100">Quantidade de Clientes:</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -398,7 +398,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         disabled={watchModelType !== "individual"}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-slate-300">
                       Número de clientes que assinarão o plano
                     </FormDescription>
                     <FormMessage />
@@ -411,7 +411,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                 name="margemPorClienteIndividual"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Margem Adicionada por Plano (%):</FormLabel>
+                    <FormLabel className="text-slate-100">Margem Adicionada por Plano (%):</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -422,7 +422,7 @@ const PlanSimulator = ({ setResults }: PlanSimulatorProps) => {
                         disabled={watchModelType !== "individual"}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-slate-300">
                       Percentual de lucro que você aplicará sobre o preço original
                     </FormDescription>
                     <FormMessage />

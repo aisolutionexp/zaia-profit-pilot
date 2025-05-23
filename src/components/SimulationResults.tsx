@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ChartContainer, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import { ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 interface SimulationResultsProps {
@@ -47,24 +47,45 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
     (results.modelType === "individual" && results.comparison.profitDifference < 0) : 
     false;
   
-  // Create chart data
-  const chartData = [
-    {
-      name: "Custo Mensal",
-      compartilhado: results.modelType === "compartilhado" ? results.baseMonthlyPrice : results.comparison?.totalCost,
-      individual: results.modelType === "individual" ? results.totalCost : results.comparison?.totalCost,
-    },
-    {
-      name: "Faturamento",
-      compartilhado: results.modelType === "compartilhado" ? results.totalRevenue : results.comparison?.totalRevenue,
-      individual: results.modelType === "individual" ? results.totalRevenue : results.comparison?.totalRevenue,
-    },
-    {
-      name: "Lucro",
-      compartilhado: results.modelType === "compartilhado" ? results.profit : results.comparison?.profit,
-      individual: results.modelType === "individual" ? results.profit : results.comparison?.profit,
-    }
-  ];
+  // Normalize data for chart to prevent extremely tall bars
+  const getChartData = () => {
+    // Get the maximum value to help with normalization
+    const maxCost = Math.max(
+      results.modelType === "compartilhado" ? (results.baseMonthlyPrice || 0) : (results.totalCost || 0),
+      results.modelType === "individual" ? (results.totalCost || 0) : (results.comparison?.totalCost || 0)
+    );
+    
+    const maxRevenue = Math.max(
+      results.totalRevenue,
+      results.comparison?.totalRevenue || 0
+    );
+    
+    const maxProfit = Math.max(
+      results.profit,
+      results.comparison?.profit || 0
+    );
+
+    return [
+      {
+        name: "Custo Mensal",
+        compartilhado: results.modelType === "compartilhado" ? results.baseMonthlyPrice : results.comparison?.totalCost,
+        individual: results.modelType === "individual" ? results.totalCost : results.comparison?.totalCost,
+        maxValue: maxCost
+      },
+      {
+        name: "Faturamento",
+        compartilhado: results.modelType === "compartilhado" ? results.totalRevenue : results.comparison?.totalRevenue,
+        individual: results.modelType === "individual" ? results.totalRevenue : results.comparison?.totalRevenue,
+        maxValue: maxRevenue
+      },
+      {
+        name: "Lucro",
+        compartilhado: results.modelType === "compartilhado" ? results.profit : results.comparison?.profit,
+        individual: results.modelType === "individual" ? results.profit : results.comparison?.profit,
+        maxValue: maxProfit
+      }
+    ];
+  };
 
   // Chart config for recharts
   const chartConfig = {
@@ -78,6 +99,8 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
     },
   };
 
+  const chartData = getChartData();
+
   return (
     <div className="space-y-8">
       <h2 className="text-2xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-orange-500">
@@ -88,7 +111,7 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
             <CardTitle className="text-slate-100">Custo Total Mensal</CardTitle>
-            <CardDescription>Base para operação</CardDescription>
+            <CardDescription className="text-slate-300">Base para operação</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-white">
@@ -107,7 +130,7 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
             <CardTitle className="text-slate-100">Faturamento Estimado</CardTitle>
-            <CardDescription>Com margem aplicada</CardDescription>
+            <CardDescription className="text-slate-300">Com margem aplicada</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-400">
@@ -124,7 +147,7 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
         <Card className="bg-slate-800 border-slate-700">
           <CardHeader>
             <CardTitle className="text-slate-100">Lucro Líquido</CardTitle>
-            <CardDescription>Faturamento - Custo</CardDescription>
+            <CardDescription className="text-slate-300">Faturamento - Custo</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-400">
@@ -148,7 +171,7 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
       <Card className="bg-slate-800 border-slate-700">
         <CardHeader>
           <CardTitle className="text-slate-100">Comparativo Visual</CardTitle>
-          <CardDescription>Análise gráfica dos resultados</CardDescription>
+          <CardDescription className="text-slate-300">Análise gráfica dos resultados</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="h-80">
@@ -170,8 +193,9 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
                   <YAxis 
                     tick={{ fill: '#94a3b8' }} 
                     tickFormatter={(value) => `R$ ${(value/1000).toFixed(0)}k`}
+                    domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} // Add 10% padding to top
                   />
-                  <Tooltip />
+                  <ChartTooltip content={<ChartTooltipContent formatter={(value) => `R$ ${Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`} />} />
                   <Bar dataKey="compartilhado" fill="var(--color-compartilhado)" name="Compartilhado" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="individual" fill="var(--color-individual)" name="Individual" radius={[4, 4, 0, 0]} />
                 </BarChart>
