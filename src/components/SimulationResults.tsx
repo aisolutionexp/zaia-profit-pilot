@@ -1,4 +1,4 @@
-
+import React from 'react';
 import {
   Card,
   CardContent,
@@ -91,11 +91,11 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
   const chartConfig = {
     compartilhado: { 
       label: "Compartilhado (WL)",
-      color: "#3b82f6"  // Blue
+      color: "#60a5fa"  // Lighter blue for better contrast
     },
     individual: { 
       label: "Individual", 
-      color: "#f97316"  // Orange
+      color: "#fb923c"  // Lighter orange for better contrast
     },
   };
 
@@ -108,10 +108,10 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
       </h2>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-slate-800/90 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-slate-100">Custo Total Mensal</CardTitle>
-            <CardDescription className="text-slate-300">Base para operação</CardDescription>
+            <CardTitle className="text-white">Custo Total Mensal</CardTitle>
+            <CardDescription className="text-slate-200">Base para operação</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-white">
@@ -119,7 +119,7 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
                 `R$ ${results.baseMonthlyPrice?.toLocaleString('pt-BR', {minimumFractionDigits: 2})}` : 
                 `R$ ${results.totalCost?.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`}
             </div>
-            <p className="text-slate-300 mt-2">
+            <p className="text-slate-200 mt-2">
               {results.modelType === "compartilhado" ? 
                 `White Label + Scale Up para ${results.clientCount} clientes` : 
                 `${results.clientCount} contas do plano ${getPlanName(results.planType)}`}
@@ -127,16 +127,16 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-slate-800/90 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-slate-100">Faturamento Estimado</CardTitle>
-            <CardDescription className="text-slate-300">Com margem aplicada</CardDescription>
+            <CardTitle className="text-white">Faturamento Estimado</CardTitle>
+            <CardDescription className="text-slate-200">Com margem aplicada</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-400">
+            <div className="text-3xl font-bold text-emerald-400">
               R$ {results.totalRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
             </div>
-            <p className="text-slate-300 mt-2">
+            <p className="text-slate-200 mt-2">
               Preço por cliente: R$ {results.pricePerClient.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
               <br />
               Margem aplicada: {results.marginPercent}%
@@ -144,19 +144,19 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-700">
+        <Card className="bg-slate-800/90 border-slate-700">
           <CardHeader>
-            <CardTitle className="text-slate-100">Lucro Líquido</CardTitle>
-            <CardDescription className="text-slate-300">Faturamento - Custo</CardDescription>
+            <CardTitle className="text-white">Lucro Líquido</CardTitle>
+            <CardDescription className="text-slate-200">Faturamento - Custo</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-green-400">
+            <div className="text-3xl font-bold text-emerald-400">
               R$ {results.profit.toLocaleString('pt-BR', {minimumFractionDigits: 2})}
             </div>
-            <p className="text-slate-300 mt-2">
+            <p className="text-slate-200 mt-2">
               Margem de lucro: {results.profitMargin.toFixed(1)}%
               {results.comparison && (
-                <span className={`block mt-1 ${isCompartilhadoBetter ? 'text-blue-400' : 'text-orange-400'}`}>
+                <span className={`block mt-1 ${isCompartilhadoBetter ? 'text-blue-300' : 'text-orange-300'} font-semibold`}>
                   {isCompartilhadoBetter ? 
                     '✓ Plano Compartilhado mais lucrativo!' : 
                     '✓ Plano Individual mais lucrativo!'}
@@ -168,13 +168,23 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
       </div>
 
       {/* Chart Comparison */}
-      <Card className="bg-slate-800 border-slate-700">
+      <Card className="bg-slate-800/90 border-slate-700 pb-0">
         <CardHeader>
-          <CardTitle className="text-slate-100">Comparativo Visual</CardTitle>
-          <CardDescription className="text-slate-300">Análise gráfica dos resultados</CardDescription>
+          <CardTitle className="text-white">Comparativo Visual</CardTitle>
+          <CardDescription className="text-slate-200">Análise gráfica dos resultados</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="h-80">
+        <CardContent className="pb-8">
+          <div 
+            className="recharts-wrapper" 
+            style={{
+              position: 'relative',
+              cursor: 'default',
+              width: '100%',
+              height: '100%',
+              maxHeight: '500px',
+              maxWidth: '500px'
+            }}
+          >
             <ChartContainer
               config={chartConfig}
             >
@@ -184,91 +194,230 @@ const SimulationResults = ({ results }: SimulationResultsProps) => {
                   margin={{
                     top: 20,
                     right: 30,
-                    left: 20,
-                    bottom: 5,
+                    left: 60,
+                    bottom: 60,
                   }}
+                  barGap={20}
+                  style={{ maxWidth: '500px' }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.15} />
-                  <XAxis dataKey="name" tick={{ fill: '#94a3b8' }} />
-                  <YAxis 
-                    tick={{ fill: '#94a3b8' }} 
-                    tickFormatter={(value) => `R$ ${(value/1000).toFixed(0)}k`}
-                    domain={[0, dataMax => Math.ceil(dataMax * 1.1)]} // Add 10% padding to top
+                  <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
+                  <XAxis 
+                    dataKey="name" 
+                    tick={{ fontSize: 16, fill: '#e2e8f0' }}
+                    tickLine={{ stroke: '#e2e8f0' }}
+                    axisLine={{ stroke: '#e2e8f0' }}
+                    dy={10}
                   />
-                  <ChartTooltip content={<ChartTooltipContent formatter={(value) => `R$ ${Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`} />} />
-                  <Bar dataKey="compartilhado" fill="var(--color-compartilhado)" name="Compartilhado" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="individual" fill="var(--color-individual)" name="Individual" radius={[4, 4, 0, 0]} />
+                  <YAxis 
+                    tick={{ fontSize: 16, fill: '#e2e8f0' }}
+                    tickLine={{ stroke: '#e2e8f0' }}
+                    axisLine={{ stroke: '#e2e8f0' }}
+                    tickFormatter={(value) => `R$ ${(value/1000).toFixed(0)}k`}
+                    domain={[0, dataMax => Math.ceil(dataMax * 1.2)]}
+                    dx={-10}
+                  />
+                  <ChartTooltip 
+                    content={
+                      <ChartTooltipContent 
+                        formatter={(value) => `R$ ${Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`}
+                      />
+                    } 
+                  />
+                  <Bar 
+                    dataKey="compartilhado" 
+                    fill="var(--color-compartilhado)" 
+                    name="Compartilhado" 
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={80}
+                  />
+                  <Bar 
+                    dataKey="individual" 
+                    fill="var(--color-individual)" 
+                    name="Individual" 
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={80}
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
-            <ChartLegend className="mt-4">
-              <ChartLegendContent />
-            </ChartLegend>
           </div>
+          <ChartLegend className="mt-6 text-base font-medium">
+            <ChartLegendContent />
+          </ChartLegend>
         </CardContent>
       </Card>
 
       {/* Recommendation */}
-      <Card className={`${isCompartilhadoBetter ? 'bg-blue-900/30 border-blue-700/50' : 'bg-orange-900/30 border-orange-700/50'}`}>
-        <CardHeader>
-          <CardTitle className={`${isCompartilhadoBetter ? 'text-blue-300' : 'text-orange-300'}`}>
-            Nossa Recomendação
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isCompartilhadoBetter ? (
-            <div className="space-y-4">
-              <p className="text-xl font-medium text-blue-100">
-                Para sua operação, recomendamos o <span className="font-bold">Modelo Compartilhado (White Label)</span>
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="bg-blue-950/50 p-4 rounded-md">
-                  <h4 className="font-semibold text-blue-300 mb-2">Vantagens para você:</h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-200">
-                    <li>Maior lucratividade a longo prazo</li>
-                    <li>Controle total sobre os preços</li>
-                    <li>Escalabilidade horizontal ilimitada</li>
-                    <li>Marca própria na plataforma</li>
-                  </ul>
+      <div className="mt-8">
+        <Card className={`bg-slate-900/80 p-6 rounded-md`}>
+          <CardHeader>
+            <CardTitle className="text-white text-center">
+              Comparativo de Recursos
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="bg-blue-950/70 p-4 rounded-md">
+                <h5 className="text-blue-200 font-semibold text-lg mb-3 text-center">Modelo Compartilhado</h5>
+                <div className="space-y-4">
+                  <div>
+                    <h6 className="text-blue-300 font-medium mb-2">Recursos Scale Up</h6>
+                    <ul className="space-y-2">
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Agentes ilimitados
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> 20.000 créditos/agente
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> 24M caracteres para treinamento
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Integrações avançadas
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Suporte 1:1
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6 className="text-blue-300 font-medium mb-2">Recursos White Label</h6>
+                    <ul className="space-y-2">
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Domínio próprio
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Personalização completa
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Sua marca na plataforma
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Gestão de subcontas
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Dashboard de revenda
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6 className="text-blue-300 font-medium mb-2">Gestão e Controle</h6>
+                    <ul className="space-y-2">
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Distribuição de créditos
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Controle de uso por cliente
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Relatórios avançados
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-                <div className="bg-blue-950/50 p-4 rounded-md">
-                  <h4 className="font-semibold text-blue-300 mb-2">Considerações:</h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-200">
-                    <li>Requer mais gestão de créditos</li>
-                    <li>Investimento inicial maior</li>
-                    <li>Necessidade de automações para alertas</li>
-                  </ul>
+              </div>
+
+              <div className="bg-orange-950/70 p-4 rounded-md">
+                <h5 className="text-orange-200 font-semibold text-lg mb-3 text-center">
+                  Plano Individual - {getPlanName(results.planType)}
+                </h5>
+                <div className="space-y-4">
+                  <div>
+                    <h6 className="text-orange-300 font-medium mb-2">Recursos do Plano</h6>
+                    <ul className="space-y-2">
+                      {results.planType === "aceleracao" && (
+                        <>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 10 agentes
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 5.000 créditos/agente
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 4M caracteres para treinamento
+                          </li>
+                          <li className="text-slate-400 flex items-center">
+                            <span className="mr-2">✗</span> Integrações avançadas
+                          </li>
+                          <li className="text-slate-400 flex items-center">
+                            <span className="mr-2">✗</span> Suporte 1:1
+                          </li>
+                        </>
+                      )}
+                      {results.planType === "growth" && (
+                        <>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 40 agentes
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 10.000 créditos/agente
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 12M caracteres para treinamento
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> Integrações avançadas
+                          </li>
+                          <li className="text-slate-400 flex items-center">
+                            <span className="mr-2">✗</span> Suporte 1:1
+                          </li>
+                        </>
+                      )}
+                      {results.planType === "scaleUp" && (
+                        <>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> Agentes ilimitados
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 20.000 créditos/agente
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> 24M caracteres para treinamento
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> Integrações avançadas
+                          </li>
+                          <li className="text-emerald-400 flex items-center">
+                            <span className="mr-2">✓</span> Suporte 1:1
+                          </li>
+                        </>
+                      )}
+                    </ul>
+                  </div>
+                  <div>
+                    <h6 className="text-orange-300 font-medium mb-2">Recursos de Marca</h6>
+                    <ul className="space-y-2">
+                      <li className="text-slate-400 flex items-center">
+                        <span className="mr-2">✗</span> Domínio próprio
+                      </li>
+                      <li className="text-slate-400 flex items-center">
+                        <span className="mr-2">✗</span> Personalização da marca
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Interface padrão Zaia
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6 className="text-orange-300 font-medium mb-2">Gestão e Controle</h6>
+                    <ul className="space-y-2">
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Gestão simplificada
+                      </li>
+                      <li className="text-emerald-400 flex items-center">
+                        <span className="mr-2">✓</span> Suporte padrão Zaia
+                      </li>
+                      <li className="text-slate-400 flex items-center">
+                        <span className="mr-2">✗</span> Relatórios avançados
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               </div>
             </div>
-          ) : (
-            <div className="space-y-4">
-              <p className="text-xl font-medium text-orange-100">
-                Para sua operação, recomendamos o <span className="font-bold">Modelo Individual por Cliente</span>
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="bg-orange-950/50 p-4 rounded-md">
-                  <h4 className="font-semibold text-orange-300 mb-2">Vantagens para você:</h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-200">
-                    <li>Menor complexidade operacional</li>
-                    <li>Investimento inicial reduzido</li>
-                    <li>Zero gestão de créditos</li>
-                    <li>Faturamento proporcional ao crescimento</li>
-                  </ul>
-                </div>
-                <div className="bg-orange-950/50 p-4 rounded-md">
-                  <h4 className="font-semibold text-orange-300 mb-2">Considerações:</h4>
-                  <ul className="list-disc pl-5 space-y-1 text-slate-200">
-                    <li>Margem de lucro potencialmente menor</li>
-                    <li>Cliente vinculado à marca Zaia</li>
-                    <li>Funcionalidades limitadas ao plano escolhido</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
