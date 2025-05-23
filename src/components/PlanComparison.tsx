@@ -147,7 +147,7 @@ const PlanComparison = () => {
             <div className="h-40 w-40 bg-blue-800/40 rounded-full flex items-center justify-center mb-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-200">1 Plano</div>
-                <div className="text-xl text-blue-300">↓</div>
+                <div className="text-xl text-blue-300">→</div>
                 <div className="text-2xl font-bold text-blue-200">N Clientes</div>
               </div>
             </div>
@@ -167,7 +167,7 @@ const PlanComparison = () => {
             <div className="h-40 w-40 bg-orange-800/40 rounded-full flex items-center justify-center mb-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-200">1 Cliente</div>
-                <div className="text-xl text-orange-300">↔</div>
+                <div className="text-xl text-orange-300">↓</div>
                 <div className="text-2xl font-bold text-orange-200">1 Plano</div>
               </div>
             </div>
